@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#SECRET="YourApiSecret"
+#SERVER="YourNightscoutServer"
+#PORT=4711
+SECRETSHA1=`echo -n ${SECRET} | sha1sum - | cut -c1-40`
+
+LANG=C \
+curl \
+    -X POST \
+    -H "API-SECRET: ${SECRETSHA1}" \
+    -H 'Accept: */*' \
+    -H 'Content-Type: application/json' \
+    -v \
+    "https://${SERVER}:${PORT}/api/v1/entries.json" \
+    --data @upload_sg.json \
+|& tee upload_sg.log

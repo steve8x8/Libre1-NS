@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# start with the CSV file
+# obtained from the reader using glucometerutils
+#  "2019-09-29 22:28:59","163.00","","CGM","(Sensor)"
+#  "2019-09-29 22:37:07","152.00","","CGM","(Scan)"
+# Caveat: This has been retrieved from a mmol/L device
+# which nevertheless seems to run in mg/dL internally!
+# ToDo: are "Finger" measurements shown here too?
+
+# Linux only!
+if [ "`uname -s`" != "Linux" ]
+then
+    echo You seem to run this on a non-Linux machine.
+    echo The \"date\" options of e.g. Darwin \(MacOS\) are limited and insufficient for this script.
+    exit 99
+fi
+
+(
+echo -n '['
+
+cat readout.csv \
+| awk -F'"' '{
+    if ($8!~/CGM/) {next;}
+    printf("%st%3.0f\t%s\n", $2 $4, t)
+    }' \
+| while read d t mg dummy
+do
+    # protect your data
+    dev="glimp://libre/0X00UNKNOWN"
+    # of course, you may:
+    # - convert $d and $t to a timestamp and
+    # - look up sensor code from external table for each timestamp
+    #
+    # I don't know about a means to extract sensor logs from the reader device
+    # (e.g. sensor start events - Glimp has them...)
+    #
+    dat=`date +%s -d"$d $t"`
+    dst=`TZ=UTC date "+%Y-%m-%dT%H:%M:%S.000Z" -d@$dat`
+    sgv=$mg
+    json="{\"device\":\"$dev\",\"type\":\"sgv\",\"date\":${dat}000,\"dateString\":\"$dst\",\"sgv\":$sgv,\"rssi\":99}"
+    echo $json
+done \
+| while read line
+do
+    echo ,
+    echo -n "$line"
+done
+echo ""
+echo ']'
+) \
+| sed 's~\[,~[~' \
+> upload_sg.json
