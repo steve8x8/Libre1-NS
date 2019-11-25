@@ -3,6 +3,7 @@
 #SECRET="YourApiSecret"
 #SERVER="YourNightscoutServer"
 #PORT=4711
+. .settings || exit 99
 SECRETSHA1=`echo -n ${SECRET} | sha1sum - | cut -c1-40`
 
 LANG=C \
