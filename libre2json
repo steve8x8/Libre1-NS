@@ -22,7 +22,7 @@ echo -n '['
 cat readout.csv \
 | awk -F'"' '{
     if ($8!~/CGM/) {next;}
-    printf("%s\t%3.0f\t%s\n", $2 $4, t)
+    printf("%s\t%3.0f\t%s\n", $2, $4, t)
     }' \
 | while read d t mg dummy
 do
