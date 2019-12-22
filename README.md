@@ -10,17 +10,18 @@ Upload data collected by the Libre1 reader to Nightscout
 ## Software
 
 - An OS unixoid enough to run GNU date, Python and Bash scripts (Linux suggested - MacOSX has a different `date` syntax and doesn't work)
-- Some software to extract the readings from the reader - e.g., `glucometerutils` by @Flameeyes (Python)
+- Some software to extract the readings from the reader - e.g., https://github.com/Flameeyes/glucometerutils (Python)
 
 ## Preparations
 
 - Read the memory of the reader into `readout.csv` using `glucometerutils`. See their README.
-
+  (A sample CSV file is provided as `sample.csv` for demonstration purposes.)
+  
 ## Procedure
 
 - Starting with the `readout.csv` file, execute `./libre2json` which will produce a `upload-sg.json` file.
 - Inspect that file.
-- Use a suitable tool to upload the JSON data. (`curl` can be used, as shown in https://github.com/steve8x8/Contour-NS)
+- Use a suitable tool to upload the JSON data. (`upload-data` has been derived from https://github.com/steve8x8/Contour-NS)
 
 ## Caveats
 
@@ -29,6 +30,7 @@ Upload data collected by the Libre1 reader to Nightscout
 - MacOSX "El Capitan" is not suited to run this software (because of a different `date` implementation).
 - Will not work with Libre 2 readers, or Libre 1 readers upgraded to the 2.4 software.
 - See below.
+- Oh, and I almost forgot: This is COMPLETELY UNTESTED!
 
 # Disclaimer
 
