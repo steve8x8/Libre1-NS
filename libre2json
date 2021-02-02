@@ -8,12 +8,19 @@
 # which nevertheless seems to run in mg/dL internally!
 # ToDo: are "Finger" measurements shown here too?
 
-# Linux only!
-if [ "`uname -s`" != "Linux" ]
+DATE=date
+if ! $DATE -d@1 >/dev/null 2>/dev/null
 then
-    echo You seem to run this on a non-Linux machine.
-    echo The \"date\" options of e.g. Darwin \(MacOS\) are limited and insufficient for this script.
-    exit 99
+    DATE=gdate
+    if ! $DATE -d@1 >/dev/null 2>/dev/null
+    then
+    	echo You seem to run this on a non-Linux machine.
+    	echo The \"date\" options of e.g. Darwin \(MacOS\) are limited and insufficient for this script.
+	echo You may \"brew install coreutils\" to provide \"gdate\" which can be used.
+	exit 99
+    else
+	echo using \"gdate\" instead of \"date\"
+    fi
 fi
 
 (
@@ -35,8 +42,8 @@ do
     # I don't know about a means to extract sensor logs from the reader device
     # (e.g. sensor start events - Glimp has them...)
     #
-    dat=`date +%s -d"$d $t"`
-    dst=`TZ=UTC date "+%Y-%m-%dT%H:%M:%S.000Z" -d@$dat`
+    dat=`$DATE +%s -d"$d $t"`
+    dst=`TZ=UTC $DATE "+%Y-%m-%dT%H:%M:%S.000Z" -d@$dat`
     sgv=$mg
     json="{\"device\":\"$dev\",\"type\":\"sgv\",\"date\":${dat}000,\"dateString\":\"$dst\",\"sgv\":$sgv,\"rssi\":99}"
     echo $json
